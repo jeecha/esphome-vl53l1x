@@ -28,6 +28,12 @@ DISTANCE_MODES = {
 
 CONF_DISTANCE_MODE = "distance_mode"
 CONF_RANGE_STATUS = "range_status"
+CONF_ROI = "roi"
+
+ROI_WIDTH_MIN = 4
+ROI_WIDTH_MAX = 16
+ROI_HEIGHT_MIN = 4
+ROI_HEIGHT_MAX = 16
 
 def validate_update_interval(config):
     if config[CONF_UPDATE_INTERVAL].total_milliseconds < 1000:
@@ -35,6 +41,20 @@ def validate_update_interval(config):
             f"VL53L1X update_interval must be 1 second or greater. Increase update_interval to >= 1 second"
         )
     return config
+
+def validate_roi(value) -> list[int]:
+    try:
+        width, height = cv.dimensions(value)
+    except cv.Invalid as e:
+        raise cv.Invalid(f"ROI {e.msg}") from e
+
+    if not (ROI_WIDTH_MIN <= width <= ROI_WIDTH_MAX):
+        raise cv.Invalid(f"ROI width must be between {ROI_WIDTH_MIN} and {ROI_WIDTH_MAX}")
+
+    if not (ROI_HEIGHT_MIN <= height <= ROI_HEIGHT_MAX):
+        raise cv.Invalid(f"ROI height must be between {ROI_HEIGHT_MIN} and {ROI_HEIGHT_MAX}")
+
+    return [width, height]
 
 CONFIG_SCHEMA = cv.All(
     cv.Schema(   
@@ -49,6 +69,7 @@ CONFIG_SCHEMA = cv.All(
                 device_class=DEVICE_CLASS_DISTANCE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
+            cv.Optional(CONF_ROI): validate_roi,
             cv.Optional(CONF_RANGE_STATUS): sensor.sensor_schema(
                 accuracy_decimals=0,
                 state_class=STATE_CLASS_MEASUREMENT,
