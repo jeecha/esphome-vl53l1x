@@ -259,7 +259,7 @@ void VL53L1XComponent::setup() {
   }
 
   if (!this-set_roi(this->roi_width_, this->roi_height_)) {
-    ESP_LOGE(TAG, "  Setting ROI failed");}
+    ESP_LOGE(TAG, "  Setting ROI failed");
     this->error_code_ = SET_MODE_FAILED;
     this->mark_failed();
     return;
@@ -468,7 +468,7 @@ bool VL53L1XComponent::set_roi(uint8_t width, uint8_t height) {
     ESP_LOGE(TAG, "  Writing ROI configuration values failed");
     return false;
   }
-    ESP_LOGE(TAG, "  Setting ROI succeeded");}
+    ESP_LOGE(TAG, "  Setting ROI succeeded");
   return true;
 }
 
