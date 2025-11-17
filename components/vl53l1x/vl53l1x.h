@@ -69,6 +69,7 @@ class VL53L1XComponent : public PollingComponent, public i2c::I2CDevice, public 
     BOOT_STATE_TIMEOUT,
     CONFIG_FAILED,
     SET_MODE_FAILED,
+    SET_ROI_FAILED
     START_RANGING_FAILED,
     SENSOR_READ_FAILED,
   } error_code_{NONE};

@@ -258,9 +258,8 @@ void VL53L1XComponent::setup() {
     return;
   }
 
-  if (!this-set_roi(this->roi_width_, this->roi_height_)) {
-    ESP_LOGE(TAG, "  Setting ROI failed");
-    this->error_code_ = SET_MODE_FAILED;
+  if (!this->set_roi(this->roi_width_, this->roi_height_)) {
+    this->error_code_ = SET_ROI_FAILED;
     this->mark_failed();
     return;
   }
@@ -303,6 +302,10 @@ void VL53L1XComponent::dump_config() {
 
     case SET_MODE_FAILED:
       ESP_LOGE(TAG, "  Communication failure when setting distance or timing budget");
+      break;
+
+    case SET_ROI_FAILED:
+      ESP_LOGE(TAG, "  Communication failure when setting ROI");
       break;
 
     case START_RANGING_FAILED:
@@ -456,20 +459,13 @@ bool VL53L1XComponent::set_distance_mode(DistanceMode distance_mode) {
 bool VL53L1XComponent::set_roi(uint8_t width, uint8_t height) {
   uint8_t temp;
   if (!this->vl53l1x_read_byte(ROI_CONFIG__USER_ROI_REQUESTED_GLOBAL_XY_SIZE, &temp)) return false;
-  ESP_LOGE(TAG, " Current ROI: %d", temp);
+  ESP_LOGD(TAG, " Current ROI: %d", temp);
 
   bool ok = true;
   // centre spad fixed at 199 for now (sensor default)
-  //if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_CENTRE_SPAD, 199);
-//  if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_REQUESTED_GLOBAL_XY_SIZE, (height - 1 << 4) | (width - 1));
-  if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_REQUESTED_GLOBAL_XY_SIZE, 255);
-  ESP_LOGE(TAG, "ok = %d", ok);
-  if (!ok) {
-    ESP_LOGE(TAG, "  Writing ROI configuration values failed");
-    return false;
-  }
-    ESP_LOGE(TAG, "  Setting ROI succeeded");
-  return true;
+  if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_CENTRE_SPAD, 199);
+  if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_REQUESTED_GLOBAL_XY_SIZE, (height - 1 << 4) | (width - 1));
+  return ok;
 }
 
 // set the measurement timing budget, which is the time allowed for one measurement
