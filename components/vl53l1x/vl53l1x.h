@@ -82,7 +82,7 @@ class VL53L1XComponent : public PollingComponent, public i2c::I2CDevice, public 
   bool set_distance_mode(DistanceMode distance_mode);
   bool get_distance_mode(DistanceMode *mode);
 
-  bool bool set_roi(uint8_t width, uint8_t height);
+  bool set_roi(uint8_t width, uint8_t height);
 
   bool start_continuous(uint32_t period_ms);
   bool stop_continuous();
