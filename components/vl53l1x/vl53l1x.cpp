@@ -453,6 +453,10 @@ bool VL53L1XComponent::set_distance_mode(DistanceMode distance_mode) {
 }
 
 bool VL53L1XComponent::set_roi(uint8_t width, uint8_t height) {
+  uint8_t temp;
+  if (!this->vl53l1x_read_byte(ROI_CONFIG__USER_ROI_REQUESTED_GLOBAL_XY_SIZE, &temp)) return false;
+  ESP_LOGE(TAG, " Current ROI: %d", temp);
+
   bool ok = true;
   // centre spad fixed at 199 for now (sensor default)
   if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_CENTRE_SPAD, 199);
