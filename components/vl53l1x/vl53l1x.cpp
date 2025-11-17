@@ -459,8 +459,9 @@ bool VL53L1XComponent::set_roi(uint8_t width, uint8_t height) {
 
   bool ok = true;
   // centre spad fixed at 199 for now (sensor default)
-  if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_CENTRE_SPAD, 199);
-  if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_REQUESTED_GLOBAL_XY_SIZE, (height - 1 << 4) | (width - 1));
+  //if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_CENTRE_SPAD, 199);
+//  if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_REQUESTED_GLOBAL_XY_SIZE, (height - 1 << 4) | (width - 1));
+  if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_REQUESTED_GLOBAL_XY_SIZE, 255);
   if (!ok) {
     ESP_LOGE(TAG, "  Writing ROI configuration values failed");
     return false;
