@@ -459,8 +459,8 @@ bool VL53L1XComponent::set_roi(uint8_t width, uint8_t height) {
   if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_REQUESTED_GLOBAL_XY_SIZE, (height - 1 << 4) | (width - 1));
   if (!ok) {
     ESP_LOGE(TAG, "  Writing ROI configuration values failed");
-    return false;
   }
+  return ok;
 }
 
 // set the measurement timing budget, which is the time allowed for one measurement
