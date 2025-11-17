@@ -103,6 +103,8 @@ static const uint16_t SD_CONFIG__WOI_SD1                                        
 static const uint16_t SD_CONFIG__INITIAL_PHASE_SD0                                        = 0x007A;
 static const uint16_t SYSTEM__GROUPED_PARAMETER_HOLD_1                                    = 0x007C;
 static const uint16_t SD_CONFIG__QUANTIFIER                                               = 0x007E;
+static const uint16_t ROI_CONFIG__USER_ROI_CENTRE_SPAD                                    = 0x007F;
+static const uint16_t ROI_CONFIG__USER_ROI_REQUESTED_GLOBAL_XY_SIZE                       = 0x0080;
 static const uint16_t SYSTEM__SEQUENCE_CONFIG                                             = 0x0081;
 static const uint16_t SYSTEM__GROUPED_PARAMETER_HOLD                                      = 0x0082;
 static const uint16_t SYSTEM__INTERRUPT_CLEAR                                             = 0x0086;
@@ -251,6 +253,12 @@ void VL53L1XComponent::setup() {
   }
 
   if (!this->set_timing_budget(TIMING_BUDGET)) {
+    this->error_code_ = SET_MODE_FAILED;
+    this->mark_failed();
+    return;
+  }
+
+  if (!this-set_roi(this->roi_width_, this->roi_height_)) {
     this->error_code_ = SET_MODE_FAILED;
     this->mark_failed();
     return;
@@ -442,6 +450,17 @@ bool VL53L1XComponent::set_distance_mode(DistanceMode distance_mode) {
   }
 
   return true;
+}
+
+bool VL53L1XComponent::set_roi(uint8_t width, uint8_t height) {
+  bool ok = true;
+  // centre spad fixed at 199 for now (sensor default)
+  if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_CENTRE_SPAD, 199);
+  if (ok) ok = this->vl53l1x_write_byte(ROI_CONFIG__USER_ROI_REQUESTED_GLOBAL_XY_SIZE, (height - 1 << 4) | (width - 1));
+  if (!ok) {
+    ESP_LOGE(TAG, "  Writing ROI configuration values failed");
+    return false;
+  }
 }
 
 // set the measurement timing budget, which is the time allowed for one measurement

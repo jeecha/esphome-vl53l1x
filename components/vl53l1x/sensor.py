@@ -95,3 +95,6 @@ async def to_code(config):
         cg.add(var.set_range_status_sensor(sens))
 
     cg.add(var.config_distance_mode(config[CONF_DISTANCE_MODE]))
+    if CONF_ROI in config:
+        width, height = config[CONF_ROI]
+        cg.add(var.config_roi(width, height))

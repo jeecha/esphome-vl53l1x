@@ -33,6 +33,7 @@ class VL53L1XComponent : public PollingComponent, public i2c::I2CDevice, public 
   void set_distance_sensor(sensor::Sensor *distance_sensor) { distance_sensor_ = distance_sensor; }
   void set_range_status_sensor(sensor::Sensor *range_status_sensor) { range_status_sensor_ = range_status_sensor; }
   void config_distance_mode(DistanceMode distance_mode ) { distance_mode_ = distance_mode; }
+  void config_roi(uint8_t width, uint8_t height) { roi_width_ = width; roi_height_ = height; }
 
   void setup() override;
   void dump_config() override;
@@ -81,6 +82,8 @@ class VL53L1XComponent : public PollingComponent, public i2c::I2CDevice, public 
   bool set_distance_mode(DistanceMode distance_mode);
   bool get_distance_mode(DistanceMode *mode);
 
+  bool bool set_roi(uint8_t width, uint8_t height);
+
   bool start_continuous(uint32_t period_ms);
   bool stop_continuous();
 
@@ -120,6 +123,9 @@ class VL53L1XComponent : public PollingComponent, public i2c::I2CDevice, public 
 
   uint16_t fast_osc_frequency_;
   uint16_t osc_calibrate_val_;
+
+  uint8_t roi_width_{16};
+  uint8_t roi_height_{16};
 
   RangingResults results_;
 
